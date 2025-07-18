@@ -1,0 +1,4 @@
+mcp[cli]
+ripgrep
+cmcp
+pytest
