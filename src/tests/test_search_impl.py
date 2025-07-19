@@ -23,6 +23,11 @@ def mock_basedir(tmp_path):
   file4 = test_dir / "other.txt"
   file4.write_text("This file should be ignored for query.")
 
+  # ダミーの長い行のファイルを作成
+  file_l = test_dir / "long_line.howm"
+  file_l.write_text(
+    "za\nb\nc\nd\ne\nf\ng\nh\ni\njj\nk\nl\nm\nn\no\np\nq\nr\ns\nt\nu\nv\nw\nx\nzy\nz")
+
   return test_dir
 
 
@@ -31,7 +36,7 @@ def test_search_notes(mock_basedir):
   query = "query"
 
   # search_notes を実行
-  results = search_notes(query, mock_basedir)
+  results = search_notes(query, mock_basedir, lines_around=0)
 
   # 結果を検証
   assert len(results) == 2  # .howm ファイルのみが対象
@@ -41,3 +46,23 @@ def test_search_notes(mock_basedir):
   assert results[1]["file"] == "note2.howm"
   assert "query" in results[0]["text"].lower()
   assert "query" in results[1]["text"].lower()
+
+
+@pytest.mark.parametrize("query,lines_around,expected_text", [
+  ("za", 2, "za\nb\nc"),
+  ("za", 1, "za\nb"),
+  ("za", 0, "za"),
+  ("b", 1, "za\nb\nc"),
+  ("c", 2, "za\nb\nc\nd\ne"),
+  ("jj", 2, "h\ni\njj\nk\nl"),
+  ("jj", 1, "i\njj\nk"),
+  ("jj", 0, "jj"),
+  ("zy", 2, "w\nx\nzy\nz"),
+  ("zy", 1, "x\nzy\nz"),
+  ("zy", 0, "zy"),
+])
+def test_search_notes_with_lines_around(mock_basedir, query, lines_around, expected_text):
+  results = search_notes(query, mock_basedir, lines_around)
+  assert len(results) == 1
+  assert results[0]["file"] == "long_line.howm"
+  assert results[0]["text"] == expected_text

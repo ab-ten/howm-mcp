@@ -1,7 +1,8 @@
 import subprocess, json, pathlib, os
+from fetch_impl  import fetch_entry
 
 
-def search_notes(query: str, basedir: pathlib.Path):
+def search_notes(query: str, basedir: pathlib.Path, lines_around: int) -> list[dict]:
   cmd = ["rg", "--no-heading", "--with-filename", "-ni", query, "."]
   res = subprocess.run(cmd, capture_output=True, text=True, check=False, cwd=basedir)
   matches = []
@@ -14,4 +15,9 @@ def search_notes(query: str, basedir: pathlib.Path):
     matches.append({"file": os.path.basename(path),
                     "line": int(lineno),
                     "text": text.strip()})
+  if lines_around > 0:
+    for m in matches:
+      m["text"] = fetch_entry(
+        m["file"], m["line"], basedir,
+        before_lines=lines_around, after_lines=lines_around)["content"]
   return matches
