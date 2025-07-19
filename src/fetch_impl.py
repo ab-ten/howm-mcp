@@ -7,6 +7,8 @@ def is_separator_line(line: str) -> bool:
 
 
 def fetch_entry(file: str, line: int, basedir: pathlib.Path):
+  # rg の行番号を行indexに変換
+  line -= 1
   # file のディレクトリトラバーサルを禁止
   if ".." in file or file.startswith("/"):
     raise ValueError("Invalid file path")
@@ -14,8 +16,8 @@ def fetch_entry(file: str, line: int, basedir: pathlib.Path):
   lines = fp.read_text(encoding="utf-8").splitlines()
   # 上向きに '=' ヘッダを探す
   start = 0
-  for i in range(line-1, -1, -1):
     if is_separator_line(lines[i]):
+  for i in range(line, -1, -1):
       start = i
       break
   # 下向きに次ヘッダ

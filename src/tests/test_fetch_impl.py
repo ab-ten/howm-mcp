@@ -16,6 +16,7 @@ Content line 2
 = Header 2
 Content line 3
 Content line 4
+= Header 3
 """)
 
     # ダミーの .howm ファイルを作成
@@ -43,6 +44,13 @@ def test_fetch_entry_next_block(mock_basedir, line_number):
     result = fetch_entry("note1.howm", line_number, mock_basedir)
     assert result["file"] == "note1.howm"
     assert result["content"] == "= Header 2\nContent line 3\nContent line 4"
+
+@pytest.mark.parametrize("line_number", [7])
+def test_fetch_entry_next_block(mock_basedir, line_number):
+    # 最後のブロックを取得
+    result = fetch_entry("note1.howm", line_number, mock_basedir)
+    assert result["file"] == "note1.howm"
+    assert result["content"] == "= Header 3"
 
 def test_fetch_entry_invalid_path(mock_basedir):
     # 無効なファイルパス
