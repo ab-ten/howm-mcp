@@ -68,6 +68,7 @@ VS Code Copilot Chat の MCP サーバー設定例：Shift-Ctrl-P のコマン�
 ```sh
 make dev
 cmcp 'mcp run mcp_server.py' tools/list
+cmcp 'mcp run mcp_server.py' tools/call name=search arguments:='{"query":"テスト"}'
 ```
 
 `cmcp` と `mcp` コマンドはコンテナ内に同梱されています。
@@ -97,6 +98,12 @@ pytest tests/  # テストを実行
 > ✔ LLM が対象ブロックを取得・要約
 
 実際の howm メモがそのまま LLM に活かされる例です。
+
+## 検索結果の前後行数制御について
+
+MCPサーバーの `search` ツールは、デフォルトで検索ヒットした行の「前後3行」を含めて返すようになりました。
+この前後行数は、環境変数 `SEARCH_LINES_AROUND` で調整できます。
+注意事項としては、docker コンテナで実行する場合、環境変数は `docker run` の `-e` オプションで指定する必要があります。
 
 ## 👍 ライセンス
 
