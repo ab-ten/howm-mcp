@@ -50,7 +50,7 @@ def test_fetch_entry_next_block(mock_basedir, line_number):
   assert result["content"] == "= Header 2\nContent line 3\nContent line 4"
 
 @pytest.mark.parametrize("line_number", [7])
-def test_fetch_entry_next_block(mock_basedir, line_number):
+def test_fetch_entry_last_block(mock_basedir, line_number):
   # 最後のブロックを取得
   result = fetch_entry("note1.howm", line_number, mock_basedir, before_lines=None, after_lines=None)
   assert result["file"] == "note1.howm"
