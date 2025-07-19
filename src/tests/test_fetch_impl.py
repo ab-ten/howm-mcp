@@ -29,6 +29,10 @@ Content line 3
 Content line 4
 """)
 
+  # ダミーの長い行のファイルを作成
+  file_l = test_dir / "long_line.howm"
+  file_l.write_text("za\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk\nl\nm\nn\no\np\nq\nr\ns\nt\nu\nv\nw\nx\ny\nz")
+
   return test_dir
 
 @pytest.mark.parametrize("line_number", [1, 2, 3])
@@ -70,3 +74,17 @@ def test_fetch_entry_no_header_next_block(mock_basedir, line_number):
   result = fetch_entry("note2.howm", line_number, mock_basedir, before_lines=None, after_lines=None)
   assert result["file"] == "note2.howm"
   assert result["content"] == "=\nContent line 3\nContent line 4"
+
+def test_fetch_around(mock_basedir):
+  # 長い行のファイルから周囲の行を取得
+  result = fetch_entry("long_line.howm", 1, mock_basedir, before_lines=2, after_lines=2)
+  assert result["file"] == "long_line.howm"
+  assert result["content"] == "za\nb\nc"
+
+  result = fetch_entry("long_line.howm", 10, mock_basedir, before_lines=2, after_lines=2)
+  assert result["file"] == "long_line.howm"
+  assert result["content"] == "h\ni\nj\nk\nl"
+
+  result = fetch_entry("long_line.howm", 26, mock_basedir, before_lines=2, after_lines=2)
+  assert result["file"] == "long_line.howm"
+  assert result["content"] == "x\ny\nz"
