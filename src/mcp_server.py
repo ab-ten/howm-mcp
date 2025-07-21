@@ -26,4 +26,4 @@ def search(query: str) -> list[dict]:
 @mcp.tool()
 def fetch(file: str, line: int) -> dict:
   """ファイル名と行番号から、その行を含むブロック全体を抽出"""
-  return fetch_entry(file, line, basedir=HOWM_DIR)
+  return fetch_entry(file, line, basedir=HOWM_DIR, before_lines=None, after_lines=None)
