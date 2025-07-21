@@ -31,11 +31,11 @@ howm の思想「フラグメントとして書き留めて、集合的に読む
 
 * `file`: ファイル名
 * `line`: 該当行の行番号
-* `text`: 行の内容
+* `text`: 行の内容（前後3行を含む）
 
 ### `fetch(file: str, line: int) -> dict`
 
-与えられた行を含むメモブロック全体（`=`または`= `で始まる行を区切りとした範囲）を抽出します：
+与えられた行を含むメモブロック全体（`=`だけの行、または`= `で始まる行を区切りとした範囲）を抽出します：
 
 * `file`: ファイル名
 * `content`: ブロック全体のテキスト
@@ -45,19 +45,30 @@ howm の思想「フラグメントとして書き留めて、集合的に読む
 ### ☕ Docker を使う
 
 ```sh
-make build
+cp Makefile.local.sample Makefile.local
+# Makefile.local を編集して HOWM_DIR を設定
+make build print # MCP サーバーコンテナイメージの作成と、MCP サーバー起動コマンドの表示
+```
+
+```sh
+make build-all
 make dev  # 開発用シェルを起動
 ```
 
-Make がない環境では：
+GNU make がない環境では以下のようにしてMCPサーバーコンテナイメージをビルドします。
 
 ```sh
-docker build -t howm-mcp .
+docker build --target runtime -t howm-mcp .
 ```
+
+`make print` でコンテナの起動コマンドを確認できます。  
+通常はこのように表示されます：
+> docker run --rm -i --network=none -v C:/Projects/howm-mcp/src:/app -v [your howm dir, please set HOWM_DIR in Makefile.local]:/docs/howm:ro howm-mcp
+
 
 ### 🤖 MCP クライアントとの連携
 
-VS Code Copilot Chat の MCP サーバー設定例：Shift-Ctrl-P のコマンドパレットから `MCP: Add Server` を選択し、stdio command 形式を選び、以下のように入力します。
+VS Code Copilot Chat の MCP サーバー設定例：Shift-Ctrl-P のコマンドパレットから `MCP: Add Server` を選択し、stdio command 形式を選び、以下のように入力します（`make print` で表示された文字列を入力します）：
 
 > `docker run --rm -i --network=none -v <proj>/src:/app -v <your-howm>:/docs/howm:ro howm-mcp`
 
@@ -69,6 +80,7 @@ VS Code Copilot Chat の MCP サーバー設定例：Shift-Ctrl-P のコマン�
 make dev
 cmcp 'mcp run mcp_server.py' tools/list
 cmcp 'mcp run mcp_server.py' tools/call name=search arguments:='{"query":"テスト"}'
+cmcp 'mcp run mcp_server.py' tools/call name=fetch arguments:='{"file":"2003_02_21.howm", "line": 49}'
 ```
 
 `cmcp` と `mcp` コマンドはコンテナ内に同梱されています。
@@ -109,13 +121,36 @@ MCPサーバーの `search` ツールは、デフォルトで検索ヒットし�
 
 このプロジェクトは [MIT License](./LICENSE) の下でライセンスされています。
 
-## 今後の予定
+## なんとなくの今後の予定
 
 - **複数キーワードの検索機能**  
   キーワードごとに検索し、全キーワードが揃っているファイルを返すようにする。
 
-- **fetch を search に統合**  
-  search で howm のメモブロック単位で返せるようにする。また、メモブロックが大きすぎる場合に適当に切り詰める。
+- **fetch, search を pagenation 対応にする**  
 
 - **README-EN.md**:  
   Create English version of this README.
+
+- CI の整備
+
+## ChangeLog
+
+### 2025-07-21
+- `fetch` ツールを呼び出すとエラーになっていた不具合を修正
+- Docker イメージをマルチステージ化してランタイムのみのコンテナを軽量化
+  - `base`, `runtime`, `dev` の3ステージ構成に変更
+  - 共通セットアップは `base` ステージで実行
+- Makefile を大幅にリファクタリング
+  - `build`, `build-dev`, `build-all`, `dev`, `remake-requirements`, `print`, `test` ターゲットを追加
+  - 開発用イメージ (`howm-mcp-dev`) と汎用的な `DOCKER_COMMAND` を導入
+- Python 依存管理を pip-tools に移行
+  - `src/requirements/*.in` → `*.txt` 自動生成用スクリプト `remake.sh` を追加
+  - ルートの古い `requirements.txt`/`requirements-dev.txt` を削除し、`src/requirements` 配下で一元管理
+
+### 2025-07-20
+- `search` ツールの前後行数を環境変数で制御可能に
+  - デフォルトは前後3行
+  - `SEARCH_LINES_AROUND` 環境変数で調整可能
+
+### 2025-07-19
+- 初期プロトタイプ公開
