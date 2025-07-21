@@ -1,0 +1,3 @@
+# HOWM_DIR に howm ファイルが保存されているディレクトリを指定します
+# windows でもパスセパレータは / で書いてください
+HOWM_DIR = C:/home/yourname/howm
