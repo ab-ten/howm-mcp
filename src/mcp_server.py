@@ -1,13 +1,17 @@
 #!/usr/bin/env python3.12
-import pathlib, os, sys
+import pathlib
+import os
+import sys
+from typing import Dict, Any, List
+
 from mcp.server.fastmcp import FastMCP
 from search_impl import search_notes
-from fetch_impl  import fetch_entry
+from fetch_impl import fetch_entry
 
-HOWM_DIR_PATH = os.environ.get("HOWM_DIR", "/docs/howm")
-HOWM_DIR = pathlib.Path(HOWM_DIR_PATH).resolve()
+HOWM_DIR_PATH: str = os.environ.get("HOWM_DIR", "/docs/howm")
+HOWM_DIR: pathlib.Path = pathlib.Path(HOWM_DIR_PATH).resolve()
 
-SEARCH_LINES_AROUND = 3 # default
+SEARCH_LINES_AROUND: int = 3  # default
 try:
   SEARCH_LINES_AROUND = int(os.environ.get("SEARCH_LINES_AROUND", "3"))
 except ValueError:
@@ -19,7 +23,7 @@ mcp = FastMCP("howm-mcp")
 
 
 @mcp.tool()
-def search(query: str) -> list[dict]:
+def search(query: str) -> List[Dict[str, Any]]:
   """
   ユーザーの howm メモ群に対してキーワード検索を行い、マッチしたファイル名・行番号・周辺テキストを返します。
 
@@ -41,7 +45,7 @@ def search(query: str) -> list[dict]:
   return search_notes(query, basedir=HOWM_DIR, lines_around=SEARCH_LINES_AROUND)
 
 @mcp.tool()
-def fetch(file: str, line: int) -> dict:
+def fetch(file: str, line: int) -> Dict[str, Any]:
   """
   ファイル名と行番号を指定し、その行を含むメモブロック全体を取得します。
   ファイル名と行番号は必ず `search` ツールで返された値を使用してください。
