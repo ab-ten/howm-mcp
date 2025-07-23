@@ -1,3 +1,4 @@
 cmcp
 pytest
 pip-tools
+mypy

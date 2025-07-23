@@ -1,5 +1,6 @@
-import pathlib, os
-from typing import Annotated, Optional
+import pathlib
+import os
+from typing import Annotated, Optional, Dict, Any
 
 
 def is_separator_line(line: str) -> bool:
@@ -13,7 +14,7 @@ def fetch_entry(
     basedir: pathlib.Path,
     before_lines: Annotated[Optional[int], "None means unlimited"],
     after_lines: Annotated[Optional[int], "None means unlimited"]
-  ) -> dict:
+  ) -> Dict[str, Any]:
   # rg の行番号を行indexに変換
   line -= 1
   # file のディレクトリトラバーサルを禁止
