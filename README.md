@@ -100,7 +100,7 @@ pytest tests/  # テストを実行
 
 以下は VSCode Copilot Chat 経由での利用例：
 
-> **質問**：「#my-howm-mcp-server を oxygen not included で検索して、検索結果からfetchして要約して」  
+> **質問**：「#my-howm-mcp-server 今 howm のメモを oxygen not included で検索して、検索結果からfetchして要約して」  
 > （my-howm-mcp-server という名前で登録している場合）
 >
 > ✔ search 実行
@@ -110,6 +110,7 @@ pytest tests/  # テストを実行
 > ✔ LLM が対象ブロックを取得・要約
 
 実際の howm メモがそのまま LLM に活かされる例です。
+（今と付けないと、そのような機能を持つプログラムコードを提案される可能性が高くなります）
 
 ## 検索結果の前後行数制御について
 
@@ -134,6 +135,9 @@ MCPサーバーの `search` ツールは、デフォルトで検索ヒットし�
 - CI の整備
 
 ## ChangeLog
+
+### 2025-07-24
+- ツールの description の詳細化と README の利用例の更新
 
 ### 2025-07-21
 - `fetch` ツールを呼び出すとエラーになっていた不具合を修正
