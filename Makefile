@@ -50,5 +50,11 @@ remake-requirements:
 print:
 	@echo "docker run --rm -i --network=none -v ${CURRENT_DIR}/src:/app -v ${HOWM_DIR}:/docs/howm:ro howm-mcp"
 
-test:
+test: test-pytest test-mypy
+	@echo "All checks passed successfully."
+
+test-pytest:
 	$(MAKE) --no-print-directory DOCKER_COMMAND="-c 'pytest tests/'" dev
+
+test-mypy:
+	$(MAKE) --no-print-directory DOCKER_COMMAND="-c 'mypy .'" dev
