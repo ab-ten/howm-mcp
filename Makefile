@@ -4,6 +4,7 @@ MCP_DEV_IMAGE := howm-mcp-dev
 #MCP_IMAGE := ubuntu:latest
 HOWM_DIR = "[your howm dir, please set HOWM_DIR in Makefile.local]"
 DOCKER_ENTRYPOINT = "/bin/bash"
+DOCKER_TTY ?= -it
 
 # include Makefile.local if it exists
 -include Makefile.local
@@ -33,7 +34,7 @@ build-all: build build-dev
 
 # 開発用コンテナを対話シェルで起動
 dev:
-	docker run --rm -it \
+	docker run --rm ${DOCKER_TTY} \
 		-v ${CURRENT_DIR}/src:/app \
 		-v ${HOWM_DIR}:/docs/howm:ro \
 		--entrypoint ${DOCKER_ENTRYPOINT} ${MCP_DEV_IMAGE} ${DOCKER_COMMAND}

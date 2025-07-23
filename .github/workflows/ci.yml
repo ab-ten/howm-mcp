@@ -35,4 +35,4 @@ jobs:
       run: make build-dev
 
     - name: Run tests on docker container
-      run: make test
+      run: make test DOCKER_TTY=""
